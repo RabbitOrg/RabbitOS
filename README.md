@@ -62,6 +62,9 @@ boot.bin <b style="color:red;">-></b> loader.bin <b style="color:red;">-></b> ke
 测试用的进程只是一个无限循环打印字母A和i++的函数，但是实现从ring0到ring1的跳转并执行这个进程需要很多步骤，特别是对堆栈段的处理，TSS|GDT|LDT|SS...
 PCB进程控制块是一个是s_proc的结构体,该结构体的第一个成员还是一个结构体(s_stackframe)，存储所有的寄存器的值。
 
+中断处理
+解决嵌套重入中断问题，添加一个全局变量k_reenter = -1; 每进入一次嵌套中断自增，判断是否为0来知道是否嵌套中断。
+
 
 <br><br>
 
