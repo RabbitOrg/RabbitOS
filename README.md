@@ -47,8 +47,8 @@ boot.bin <b style="color:red;">-></b> loader.bin <b style="color:red;">-></b> ke
 
 进程！！！
 
-完成进程调度
-需要
+完成进程调度 需要
+
 1.时钟中断处理程序
 2.进程调度模块
 3.多个进程体
@@ -85,6 +85,27 @@ P267 & P268 ----- 键盘中断 MakeCode & BreakCode
 
 各种与运算或与运算宝宝看不懂啊！！！！
 什么鬼啊！！！
+
+#####垃圾Bug - 0
+垃圾GCC编译器版本 makefile不通过
+
+Error : undefined reference to `__stack_chk_fail'
+
+需要改MakeFile里面的CFLAGS 加上**-fno-stack-protector**
+CFLAGS	= -I include/ -c -fno-builtin -fno-stack-protector
+
+#####垃圾Bug - 1
+在bochs下按Alt + Fn 这个组合键只会相应ubuntu的全局快捷键，不能响应虚拟机里面的操作 **冷漠**
+于是请教吕老师，给出的回答是把Alt + Fn组合键改成ctrl + Fn这种组合键 **简单粗暴**
+
+P315 ----- 增加一个系统调用 需要的步骤。
+
+
+###第八章
+
+进程间通信！！！
+
+Minix->微内核<br>Linux->宏内核
 
 
 
