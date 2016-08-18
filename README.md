@@ -118,6 +118,17 @@ printl() --> printf() --> printx()
 
 文件系统！！！
 
+硬盘驱动程序 硬盘系统进程
+
+用bximage新建一个80M的硬盘 '80m.img'
+
+SuperBlock -> Metadata
+Sector map
+inode_array
+inode map
+
+分区好复杂？？？
+
 
 <br><br>
 
