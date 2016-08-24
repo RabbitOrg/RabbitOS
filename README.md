@@ -2,6 +2,25 @@
 
 **参考书目：一个操作系统的实现**
 
+<br>
+
+Usage:
+
+```
+$make image
+$cd ./command
+$make install
+$cd ..
+$bochs -f bochsrc
+```
+
+##版本1.0
+
+Orange's OS
+书中的chapter11/a 代码
+切换控制台的按键Alt + Fn 改为 Ctrl + Fn 
+
+
 ##章节
 
 ###第一章
@@ -86,15 +105,19 @@ P267 & P268 ----- 键盘中断 MakeCode & BreakCode
 各种与运算或与运算宝宝看不懂啊！！！！
 什么鬼啊！！！
 
-#####垃圾Bug - 0
+**垃圾Bug - 0**
+
 垃圾GCC编译器版本 makefile不通过
 
-Error : undefined reference to `__stack_chk_fail'
+<code>Error : undefined reference to '__stack_chk_fail'</code>
 
-需要改MakeFile里面的CFLAGS 加上**-fno-stack-protector**
-CFLAGS	= -I include/ -c -fno-builtin -fno-stack-protector
+需要改MakeFile里面的CFLAGS 加上 -fno-stack-protector
+<br>
+即CFLAGS	= -I include/ -c -fno-builtin -fno-stack-protector
 
-#####垃圾Bug - 1
+
+**垃圾Bug - 1**
+
 在bochs下按Alt + Fn 这个组合键只会相应ubuntu的全局快捷键，不能响应虚拟机里面的操作 **冷漠**
 于是请教吕老师，给出的回答是把Alt + Fn组合键改成ctrl + Fn这种组合键 **简单粗暴**
 
@@ -122,16 +145,18 @@ printl() --> printf() --> printx()
 
 用bximage新建一个80M的硬盘 '80m.img'
 
+```
 SuperBlock -> Metadata
 Sector map
 inode_array
 inode map
+```
 
 分区好复杂？？？
 
 #####文件系统
 
-include/fs.h  ```#define MAGIC_V1 0x111```   -->  应该自定义为RabbitOS专属的代号
+<code>include/fs.h  ```#define MAGIC_V1 0x111```   -->  应该自定义为RabbitOS专属的代号</code>
 
 **磁盘读写**
 可以改进成电梯扫描法！～
@@ -157,7 +182,7 @@ P425第二段第三行末尾两个错别字-->'接触' : '解除';
 
 P454 可以被链接成库的文件
 
-**严重的bug**
+严重的**BUG**
 
 chapter10/c 
 
@@ -169,6 +194,8 @@ chapter10/c
 ###第十一章
 
 尾声。
+
+官网已经没有书中说的0.97版本的grub了，只有1.99和2.00的grub，然而我都没有办法编译成功。
 
 <br><br>
 
