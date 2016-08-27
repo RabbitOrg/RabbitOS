@@ -27,7 +27,16 @@
  *****************************************************************************/
 PUBLIC int kernel_main()
 {
-	disp_str("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	//disp_str("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+	//	 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+
+	/*disp_str("\n\n\n========================================================\n"
+		 "      ____       _     _     _ _      ___  ____   \n"
+		 "     |  _ \\ __ _| |__ | |__ (_) |_   / _ \\/ ___|  \n"
+		 "     | |_) / _` | '_ \\| '_ \\| | __| | | | \\___ \\  \n"
+		 "     |  _ < (_| | |_) | |_) | | |_  | |_| |___) | \n"
+		 "     |_| \\_\\__,_|_.__/|_.__/|_|\\__|  \\___/|____/  \n\n"
+		 "========================================================\n\n\n");*/
 
 	int i, j, eflags, prio;
         u8  rpl;
@@ -186,20 +195,11 @@ void untar(const char * filename)
 
 	char buf[SECTOR_SIZE * 16];
 	int chunk = sizeof(buf);
-	int i = 0;
-	int bytes = 0;
 
 	while (1) {
-		bytes = read(fd, buf, SECTOR_SIZE);
-		assert(bytes == SECTOR_SIZE); /* size of a TAR file
-					       * must be multiple of 512
-					       */
-		if (buf[0] == 0) {
-			if (i == 0)
-				printf("    need not unpack the file.\n");
+		read(fd, buf, SECTOR_SIZE);
+		if (buf[0] == 0)
 			break;
-		}
-		i++;
 
 		struct posix_tar_header * phdr = (struct posix_tar_header *)buf;
 
@@ -210,35 +210,27 @@ void untar(const char * filename)
 			f_len = (f_len * 8) + (*p++ - '0'); /* octal */
 
 		int bytes_left = f_len;
-		int fdout = open(phdr->name, O_CREAT | O_RDWR | O_TRUNC);
+		int fdout = open(phdr->name, O_CREAT | O_RDWR);
 		if (fdout == -1) {
 			printf("    failed to extract file: %s\n", phdr->name);
-			printf(" aborted]\n");
-			close(fd);
+			printf(" aborted]");
 			return;
 		}
-		printf("    %s\n", phdr->name);
+		printf("    %s (%d bytes)\n", phdr->name, f_len);
+		if(phdr->name[0] == 'p') break;
 		while (bytes_left) {
 			int iobytes = min(chunk, bytes_left);
 			read(fd, buf,
 			     ((iobytes - 1) / SECTOR_SIZE + 1) * SECTOR_SIZE);
-			bytes = write(fdout, buf, iobytes);
-			assert(bytes == iobytes);
+			write(fdout, buf, iobytes);
 			bytes_left -= iobytes;
 		}
 		close(fdout);
 	}
 
-	if (i) {
-		lseek(fd, 0, SEEK_SET);
-		buf[0] = 0;
-		bytes = write(fd, buf, 1);
-		assert(bytes == 1);
-	}
-
 	close(fd);
 
-	printf(" done, %d files extracted]\n", i);
+	printf(" done]\n");
 }
 
 /*****************************************************************************
@@ -324,6 +316,14 @@ void Init()
 	assert(fd_stdout == 1);
 
 	printf("Init() is running ...\n");
+
+	printf("\n========================================================\n"
+		 "      ____       _     _     _ _      ___  ____   \n"
+		 "     |  _ \\ __ _| |__ | |__ (_) |_   / _ \\/ ___|  \n"
+		 "     | |_) / _` | '_ \\| '_ \\| | __| | | | \\___ \\  \n"
+		 "     |  _ < (_| | |_) | |_) | | |_  | |_| |___) | \n"
+		 "     |_| \\_\\__,_|_.__/|_.__/|_|\\__|  \\___/|____/  \n\n"
+		 "========================================================\n\n");
 
 	/* extract `cmd.tar' */
 	untar("/cmd.tar");

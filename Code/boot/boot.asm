@@ -145,6 +145,8 @@ LABEL_FILE_LOADED:
 
 	mov	dh, 1			; "Ready."
 	call	DispStr			; 显示字符串
+	mov	dh, 3			; "Rabbit OS"
+	call	DispStr			; 显示字符串
 
 ; *****************************************************************************************************
 	jmp	LOADER_SEG:LOADER_OFF	; 这一句正式跳转到已加载到内存中的 LOADER.BIN 的开始处

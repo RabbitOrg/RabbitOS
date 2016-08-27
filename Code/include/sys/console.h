@@ -24,7 +24,6 @@ typedef struct s_console
 
 #define SCR_SIZE		(80 * 25)
 #define SCR_WIDTH		 80
-#define TAB_WIDTH		 8
 
 #define DEFAULT_CHAR_COLOR	(MAKE_COLOR(BLACK, WHITE))
 #define GRAY_CHAR		(MAKE_COLOR(BLACK, BLACK) | BRIGHT)

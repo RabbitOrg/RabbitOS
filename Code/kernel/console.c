@@ -84,7 +84,6 @@ PUBLIC void init_screen(TTY* tty)
  *****************************************************************************/
 PUBLIC void out_char(CONSOLE* con, char ch)
 {
-	int i;
 	u8* pch = (u8*)(V_MEM_BASE + con->cursor * 2);
 
 	assert(con->cursor - con->orig < con->con_size);
@@ -105,13 +104,6 @@ PUBLIC void out_char(CONSOLE* con, char ch)
 			con->cursor--;
 			*(pch - 2) = ' ';
 			*(pch - 1) = DEFAULT_CHAR_COLOR;
-		}
-		break;
-	case '\t':
-		for (i = 0; i < TAB_WIDTH; i++) {
-			*pch++ = ' ';
-			*pch++ = DEFAULT_CHAR_COLOR;
-			con->cursor++;
 		}
 		break;
 	default:

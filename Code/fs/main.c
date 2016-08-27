@@ -71,9 +71,9 @@ PUBLIC void task_fs()
 		case EXIT:
 			fs_msg.RETVAL = fs_exit();
 			break;
-		case LSEEK:
-			fs_msg.OFFSET = do_lseek();
-			break;
+		/* case LSEEK: */
+		/* 	fs_msg.OFFSET = do_lseek(); */
+		/* 	break; */
 		case STAT:
 			fs_msg.RETVAL = do_stat();
 			break;
@@ -91,9 +91,9 @@ PUBLIC void task_fs()
 		msg_name[WRITE]  = "WRITE";
 		msg_name[LSEEK]  = "LSEEK";
 		msg_name[UNLINK] = "UNLINK";
-		msg_name[FORK]   = "FORK";
-		msg_name[EXIT]   = "EXIT";
-		msg_name[STAT]   = "STAT";
+		/* msg_name[FORK]   = "FORK"; */
+		/* msg_name[EXIT]   = "EXIT"; */
+		/* msg_name[STAT]   = "STAT"; */
 
 		switch (msgtype) {
 		case UNLINK:
@@ -106,7 +106,7 @@ PUBLIC void task_fs()
 		case WRITE:
 		case FORK:
 		case EXIT:
-		case LSEEK:
+		/* case LSEEK: */
 		case STAT:
 			break;
 		case RESUME_PROC:
@@ -155,14 +155,8 @@ PRIVATE void init_fs()
 	assert(dd_map[MAJOR(ROOT_DEV)].driver_nr != INVALID_DRIVER);
 	send_recv(BOTH, dd_map[MAJOR(ROOT_DEV)].driver_nr, &driver_msg);
 
-	/* read the super block of ROOT DEVICE */
-	RD_SECT(ROOT_DEV, 1);
-
-	sb = (struct super_block *)fsbuf;
-	if (sb->magic != MAGIC_V1) {
-		printl("{FS} mkfs\n");
-		mkfs(); /* make FS */
-	}
+	/* make FS */
+	mkfs();
 
 	/* load super block of ROOT */
 	read_super_block(ROOT_DEV);

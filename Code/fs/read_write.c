@@ -76,15 +76,10 @@ PUBLIC int do_rdwt()
 		assert((fs_msg.type == READ) || (fs_msg.type == WRITE));
 
 		int pos_end;
-		int bytes_left;
-		if (fs_msg.type == READ) {
+		if (fs_msg.type == READ)
 			pos_end = min(pos + len, pin->i_size);
-			bytes_left = min(len, pin->i_size - pos);
-		}
-		else {		/* WRITE */
+		else		/* WRITE */
 			pos_end = min(pos + len, pin->i_nr_sects * SECTOR_SIZE);
-			bytes_left = len;
-		}
 
 		int off = pos % SECTOR_SIZE;
 		int rw_sect_min=pin->i_start_sect+(pos>>SECTOR_SIZE_SHIFT);
@@ -94,6 +89,7 @@ PUBLIC int do_rdwt()
 				FSBUF_SIZE >> SECTOR_SIZE_SHIFT);
 
 		int bytes_rw = 0;
+		int bytes_left = len;
 		int i;
 		for (i = rw_sect_min; i <= rw_sect_max; i += chunk) {
 			/* read/write this amount of bytes every time */

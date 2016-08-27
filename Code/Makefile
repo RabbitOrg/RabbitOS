@@ -6,8 +6,9 @@
 # It must have the same value with 'KernelEntryPointPhyAddr' in load.inc!
 ENTRYPOINT	= 0x1000
 
-FD		= a.img
-HD		= 80m.img
+# Offset of entry point in kernel file
+# It depends on ENTRYPOINT
+ENTRYOFFSET	=   0x400
 
 # Programs, flags, etc.
 ASM		= nasm
@@ -23,7 +24,7 @@ DASMFLAGS	= -D
 ARFLAGS		= rcs
 
 # This Program
-ORANGESBOOT	= boot/boot.bin boot/hdboot.bin boot/loader.bin boot/hdloader.bin
+ORANGESBOOT	= boot/boot.bin boot/loader.bin
 ORANGESKERNEL	= kernel.bin
 LIB		= lib/orangescrt.a
 
@@ -35,13 +36,12 @@ OBJS		= kernel/kernel.o kernel/start.o kernel/main.o\
 			lib/syslog.o\
 			mm/main.o mm/forkexit.o mm/exec.o\
 			fs/main.o fs/open.o fs/misc.o fs/read_write.o\
-			fs/link.o \
+			fs/link.o\
 			fs/disklog.o
 LOBJS		=  lib/syscall.o\
 			lib/printf.o lib/vsprintf.o\
 			lib/string.o lib/misc.o\
 			lib/open.o lib/read.o lib/write.o lib/close.o lib/unlink.o\
-			lib/lseek.o\
 			lib/getpid.o lib/stat.o\
 			lib/fork.o lib/exit.o lib/wait.o lib/exec.o
 DASMOUTPUT	= kernel.bin.asm
@@ -68,11 +68,10 @@ realclean :
 disasm :
 	$(DASM) $(DASMFLAGS) $(ORANGESKERNEL) > $(DASMOUTPUT)
 
+# We assume that "a.img" exists in current folder
 buildimg :
-	dd if=boot/boot.bin of=$(FD) bs=512 count=1 conv=notrunc
-	dd if=boot/hdboot.bin of=$(HD) seek=`echo "obase=10;ibase=16;\`egrep -e '^ROOT_BASE' boot/include/load.inc | sed -e 's/.*0x//g'\`*200" | bc` bs=1 count=446 conv=notrunc
-	dd if=boot/hdboot.bin of=$(HD) seek=`echo "obase=10;ibase=16;\`egrep -e '^ROOT_BASE' boot/include/load.inc | sed -e 's/.*0x//g'\`*200+1FE" | bc` skip=510 bs=1 count=2 conv=notrunc
-	sudo mount -o loop $(FD) /mnt/floppy/
+	dd if=boot/boot.bin of=a.img bs=512 count=1 conv=notrunc
+	sudo mount -o loop a.img /mnt/floppy/
 	sudo cp -fv boot/loader.bin /mnt/floppy/
 	sudo cp -fv kernel.bin /mnt/floppy
 	sudo umount /mnt/floppy
@@ -80,13 +79,7 @@ buildimg :
 boot/boot.bin : boot/boot.asm boot/include/load.inc boot/include/fat12hdr.inc
 	$(ASM) $(ASMBFLAGS) -o $@ $<
 
-boot/hdboot.bin : boot/hdboot.asm boot/include/load.inc boot/include/fat12hdr.inc
-	$(ASM) $(ASMBFLAGS) -o $@ $<
-
 boot/loader.bin : boot/loader.asm boot/include/load.inc boot/include/fat12hdr.inc boot/include/pm.inc
-	$(ASM) $(ASMBFLAGS) -o $@ $<
-
-boot/hdloader.bin : boot/hdloader.asm boot/include/load.inc boot/include/fat12hdr.inc boot/include/pm.inc
 	$(ASM) $(ASMBFLAGS) -o $@ $<
 
 $(ORANGESKERNEL) : $(OBJS) $(LIB)
@@ -189,9 +182,6 @@ lib/exec.o: lib/exec.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 lib/stat.o: lib/stat.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-lib/lseek.o: lib/lseek.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 mm/main.o: mm/main.c
