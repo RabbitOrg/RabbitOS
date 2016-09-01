@@ -23,11 +23,43 @@ $cd ..
 $bochs -f bochsrc
 ```
 
+##版本1.1
+
+**增加一个ls指令**
+
+1.在/command 中 增加一个 ls.c
+2.修改/command/MakeFile
+
+```
+BIN = ... ls
+ls.o: ls.c ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+ls : ls.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+```
+
+3./include/sys/const.c msgtype 增加新的消息类型枚举类型
+
+4./lib 增加一个list.c
+
+5.修改MakeFile 加上对 /lib/list.c的编译
+
+6.修改/fs/main.c 
+修改task_fs()
+增加fs_list()
+
+读写一定要记得 进入内核态后 虚拟地址和物理地址的转换 我在这里浪费了好几个小时。
+
+
 ##版本1.0
 
 Orange's OS
+<br>
 书中的chapter10/e 代码
+<br>
 切换控制台的按键Alt + Fn 改为 Ctrl + Fn 
+<br>
 Rabbit OS启动界面
 
 

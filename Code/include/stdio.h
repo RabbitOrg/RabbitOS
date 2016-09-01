@@ -123,6 +123,9 @@ PUBLIC int	write		(int fd, const void *buf, int count);
 /* lib/unlink.c */
 PUBLIC	int	unlink		(const char *pathname);
 
+/* lib/list.c */
+PUBLIC	int	list		(const char *pathname, void* buf);
+
 /* lib/getpid.c */
 PUBLIC int	getpid		();
 

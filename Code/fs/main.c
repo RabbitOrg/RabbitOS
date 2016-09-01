@@ -62,6 +62,9 @@ PUBLIC void task_fs()
 		case UNLINK:
 			fs_msg.RETVAL = do_unlink();
 			break;
+		case LIST:
+			fs_msg.FD = fs_list();
+			break;
 		case RESUME_PROC:
 			src = fs_msg.PROC_NR;
 			break;
@@ -89,6 +92,7 @@ PUBLIC void task_fs()
 		msg_name[CLOSE]  = "CLOSE";
 		msg_name[READ]   = "READ";
 		msg_name[WRITE]  = "WRITE";
+		msg_name[LIST]  = "LIST";
 		msg_name[LSEEK]  = "LSEEK";
 		msg_name[UNLINK] = "UNLINK";
 		/* msg_name[FORK]   = "FORK"; */
@@ -104,6 +108,7 @@ PUBLIC void task_fs()
 		case CLOSE:
 		case READ:
 		case WRITE:
+		case LIST:
 		case FORK:
 		case EXIT:
 		/* case LSEEK: */
@@ -593,3 +598,54 @@ PRIVATE int fs_exit()
 	return 0;
 }
 
+
+/*****************************************************************************
+ *                                fs_list
+ *****************************************************************************/
+/**
+ * Show all files under the directory.
+ * 
+ * @return Zero if success.
+ *****************************************************************************/
+PUBLIC int fs_list()
+{
+	int src = fs_msg.source;		/* caller proc nr. */
+	void* buf = fs_msg.BUF;
+	int bytes_rw = 0;
+	//memcpy(buf, "filesystem", 10);
+	phys_copy((void*)va2la(src, buf + bytes_rw),
+		  "filesystem",
+		  10);
+	//char* p;
+
+/*
+	struct inode* dir_inode = root_inode;
+
+	int dir_blk0_nr = dir_inode->i_start_sect;
+	int nr_dir_blks = (dir_inode->i_size + SECTOR_SIZE) / SECTOR_SIZE;
+	int nr_dir_entries =
+		dir_inode->i_size / DIR_ENTRY_SIZE; 
+	int m = 0;
+	struct dir_entry * pde;
+
+	int i, j, k;
+	for (i = 0; i < nr_dir_blks; i++) {
+		RD_SECT(dir_inode->i_dev, dir_blk0_nr + i);
+
+		pde = (struct dir_entry *)fsbuf;
+		for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++,pde++) {
+			if (++m > nr_dir_entries)
+				break;
+			if(pde->inode_nr != 0) {
+				p = pde->name;
+				for(k = 0; k < MAX_FILENAME_LEN ; k++)
+					fsbuf[count++] = pde->name[k]; 
+				fsbuf[count++] = '|';
+			}
+		}
+		if (m > nr_dir_entries)/* all entries have been iterated or */
+	//		break;
+	//}
+
+	return 0;
+}
