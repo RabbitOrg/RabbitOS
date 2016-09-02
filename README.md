@@ -11,6 +11,8 @@
 
 **参考书目：一个操作系统的实现**
 
+Edit by tsengkasing
+
 <br>
 
 Usage:
@@ -28,6 +30,7 @@ $bochs -f bochsrc
 **增加一个ls指令**
 
 1.在/command 中 增加一个 ls.c
+
 2.修改/command/MakeFile
 
 ```
@@ -41,16 +44,30 @@ ls : ls.o start.o $(LIB)
 
 3./include/sys/const.c msgtype 增加新的消息类型枚举类型
 
-4./lib 增加一个list.c
+4./lib 增加一个list.c <br>并且在/include/stdio.h 中增加list函数的声明
 
 5.修改MakeFile 加上对 /lib/list.c的编译
 
 6.修改/fs/main.c 
+
+```
 修改task_fs()
 增加fs_list()
+```
 
 读写一定要记得 进入内核态后 虚拟地址和物理地址的转换 我在这里浪费了好几个小时。
 
+```
+char* str = "something you want to copy";
+/*
+*  src 		->  msg.source
+*  buf 		->  target memory
+*  bytes_rw 	->  offset
+*/
+phys_copy((void*)va2la(src, buf + bytes_rw),
+			str,
+			strlen(str));
+```
 
 ##版本1.0
 
@@ -114,17 +131,17 @@ boot.bin <b style="color:red;">-></b> loader.bin <b style="color:red;">-></b> ke
 2.进程调度模块
 3.多个进程体
 
-时钟中断是用汇编写的-_-! (就不说了
+时钟中断是用汇编写的 (就不说了
 
 进程调度也是在中断中处理的 (也是汇编
 
 ---------------准备进程表---------------
 
 测试用的进程只是一个无限循环打印字母A和i++的函数，但是实现从ring0到ring1的跳转并执行这个进程需要很多步骤，特别是对堆栈段的处理，TSS|GDT|LDT|SS...
-PCB进程控制块是一个是s_proc的结构体,该结构体的第一个成员还是一个结构体(s_stackframe)，存储所有的寄存器的值。
+PCB进程控制块是一个是``` s_proc ```的结构体,该结构体的第一个成员还是一个结构体(```s_stackframe```)，存储所有的寄存器的值。
 
 中断处理
-解决嵌套重入中断问题，添加一个全局变量k_reenter = -1; 每进入一次嵌套中断自增，判断是否为0来知道是否嵌套中断。
+解决嵌套重入中断问题，添加一个全局变量```k_reenter = -1;``` 每进入一次嵌套中断自增，判断是否为0来知道是否嵌套中断。
 
 学习借鉴Minix的中断处理模块后修改了本来的代码，将其模块化 划分成save | restart 等多段清晰的代码段。
 算是达到了一个里程碑 (黑人问号？？？？
@@ -153,7 +170,7 @@ P267 & P268 ----- 键盘中断 MakeCode & BreakCode
 
 <code>Error : undefined reference to '__stack_chk_fail'</code>
 
-需要改MakeFile里面的CFLAGS 加上 -fno-stack-protector
+需要改MakeFile里面的CFLAGS 加上 ** -fno-stack-protector **
 <br>
 即CFLAGS	= -I include/ -c -fno-builtin -fno-stack-protector
 
@@ -212,7 +229,7 @@ inode map
 
 -----我已经开始跳着看了。。代码量越来越多了-----
 
-strip_path() 根据路径返回文件名及其所在inode
+```strip_path()``` 根据路径返回文件名及其所在inode
 
 P425第二段第三行末尾两个错别字-->'接触' : '解除';
 
@@ -238,6 +255,8 @@ chapter10/c
 尾声。
 
 官网已经没有书中说的0.97版本的grub了，只有1.99和2.00的grub，然而我都没有办法编译成功。
+<br>
+后来发现是编译时需要  ```./configure --disable-werror```
 
 <br><br>
 

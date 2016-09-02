@@ -27,6 +27,7 @@ PRIVATE void mkfs();
 PRIVATE void read_super_block(int dev);
 PRIVATE int fs_fork();
 PRIVATE int fs_exit();
+PUBLIC int fs_list();
 
 /*****************************************************************************
  *                                task_fs
@@ -613,12 +614,10 @@ PUBLIC int fs_list()
 	void* buf = fs_msg.BUF;
 	int bytes_rw = 0;
 	//memcpy(buf, "filesystem", 10);
-	phys_copy((void*)va2la(src, buf + bytes_rw),
+	/*phys_copy((void*)va2la(src, buf + bytes_rw),
 		  "filesystem",
-		  10);
-	//char* p;
+		  10);*/
 
-/*
 	struct inode* dir_inode = root_inode;
 
 	int dir_blk0_nr = dir_inode->i_start_sect;
@@ -628,7 +627,7 @@ PUBLIC int fs_list()
 	int m = 0;
 	struct dir_entry * pde;
 
-	int i, j, k;
+	int i, j;
 	for (i = 0; i < nr_dir_blks; i++) {
 		RD_SECT(dir_inode->i_dev, dir_blk0_nr + i);
 
@@ -637,15 +636,19 @@ PUBLIC int fs_list()
 			if (++m > nr_dir_entries)
 				break;
 			if(pde->inode_nr != 0) {
-				p = pde->name;
-				for(k = 0; k < MAX_FILENAME_LEN ; k++)
-					fsbuf[count++] = pde->name[k]; 
-				fsbuf[count++] = '|';
+				phys_copy((void*)va2la(src, buf + bytes_rw),
+					  (void*)pde->name,
+					  strlen(pde->name));
+				bytes_rw += strlen(pde->name);
+				phys_copy((void*)va2la(src, buf + bytes_rw),
+					  "|",
+					  1);
+				bytes_rw += 1;
 			}
 		}
 		if (m > nr_dir_entries)/* all entries have been iterated or */
-	//		break;
-	//}
+			break;
+	}
 
 	return 0;
 }
