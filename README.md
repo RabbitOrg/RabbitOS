@@ -27,6 +27,12 @@ $bochs -f bochsrc
 
 ##版本1.1
 
+**只能读1024字节的cat指令以及可以创建文件的touch指令**
+
+1.在/command 中 增加一个cat.c
+2.修改/command/MakeFile 增添对此的编译即可
+3.因为只需调用之前文件系统写好的open()和read()等等函数，故不需要写其他文件的代码。
+
 **增加一个ls指令**
 
 1.在/command 中 增加一个 ls.c

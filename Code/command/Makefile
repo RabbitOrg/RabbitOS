@@ -64,3 +64,9 @@ touch.o: touch.c ../include/stdio.h ../include/sys/fs.h
 
 touch : touch.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?
+
+cat.o: cat.c ../include/stdio.h ../include/sys/fs.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+cat : cat.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
