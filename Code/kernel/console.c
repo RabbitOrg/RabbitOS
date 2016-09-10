@@ -27,7 +27,7 @@ PRIVATE void	set_cursor(unsigned int position);
 PRIVATE void	set_video_start_addr(u32 addr);
 PRIVATE void	flush(CONSOLE* con);
 PRIVATE	void	w_copy(unsigned int dst, const unsigned int src, int size);
-PRIVATE void	clear_screen(int pos, int len);
+PUBLIC void	clear_screen(int pos, int len);
 
 /*****************************************************************************
  *                                init_screen
@@ -146,7 +146,7 @@ PUBLIC void out_char(CONSOLE* con, char ch)
  * @param pos  Write from here.
  * @param len  How many whitespaces will be written.
  *****************************************************************************/
-PRIVATE void clear_screen(int pos, int len)
+PUBLIC void clear_screen(int pos, int len)
 {
 	u8 * pch = (u8*)(V_MEM_BASE + pos * 2);
 	while (--len >= 0) {

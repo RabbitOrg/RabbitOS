@@ -12,13 +12,11 @@ int main(int argc, char * argv[])
 		printf("cat: %s: No such file or directory\n", argv[1]);
 		return -1;
 	}
-	printf("File opened. fd: %d\n", fd);
 
 	/* read */
 	int n = read(fd, bufr, rd_bytes);
-	assert(n == rd_bytes);
 	bufr[n] = 0;
-	printf("%dbytes read:%s\n", n, bufr);
+	printf("%s\n", bufr);
 
 	close(fd);
 

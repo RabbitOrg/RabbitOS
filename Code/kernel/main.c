@@ -30,14 +30,6 @@ PUBLIC int kernel_main()
 	//disp_str("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 	//	 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
-	/*disp_str("\n\n\n========================================================\n"
-		 "      ____       _     _     _ _      ___  ____   \n"
-		 "     |  _ \\ __ _| |__ | |__ (_) |_   / _ \\/ ___|  \n"
-		 "     | |_) / _` | '_ \\| '_ \\| | __| | | | \\___ \\  \n"
-		 "     |  _ < (_| | |_) | |_) | | |_  | |_| |___) | \n"
-		 "     |_| \\_\\__,_|_.__/|_.__/|_|\\__|  \\___/|____/  \n\n"
-		 "========================================================\n\n\n");*/
-
 	int i, j, eflags, prio;
         u8  rpl;
         u8  priv; /* privilege */
@@ -217,7 +209,7 @@ void untar(const char * filename)
 			return;
 		}
 		printf("    %s (%d bytes)\n", phdr->name, f_len);
-		//if(phdr->name[0] == 'p') break;
+
 		while (bytes_left) {
 			int iobytes = min(chunk, bytes_left);
 			read(fd, buf,
@@ -276,12 +268,16 @@ void shabby_shell(const char * tty_name)
 		} while(ch);
 		argv[argc] = 0;
 
+		int ret = find_instr(argc, argv);
+		if(ret != -2) continue;
+
 		int fd = open(argv[0], O_RDWR);
 		if (fd == -1) {
 			if (rdbuf[0]) {
-				write(1, "{", 1);
+				//write(1, "{", 1);
 				write(1, rdbuf, r);
-				write(1, "}\n", 2);
+				write(1, ": command not found\n", 20);
+				//write(1, "}\n", 2);
 			}
 		}
 		else {
@@ -301,6 +297,42 @@ void shabby_shell(const char * tty_name)
 	close(0);
 }
 
+/***********************************************************************
+				clear screen 
+************************************************************************/
+void clear() {
+	int i = 0;
+	disp_pos = 0;
+	for(i=0;i<console_table[current_console].cursor;i++){
+		disp_str(" ");
+	}
+	disp_pos = 0;
+
+	console_table[current_console].crtc_start = 0;
+	console_table[current_console].cursor = 0;
+}
+
+/***********************************************************************
+				show title
+************************************************************************/
+void showTitle() {
+	clear();
+
+	printf("\n====================================================================\n"
+		 "              ____       _     _     _ _      ___  ____   \n"
+		 "             |  _ \\ __ _| |__ | |__ (_) |_   / _ \\/ ___|  \n"
+		 "             | |_) / _` | '_ \\| '_ \\| | __| | | | \\___ \\  \n"
+		 "             |  _ < (_| | |_) | |_) | | |_  | |_| |___) | \n"
+		 "             |_| \\_\\__,_|_.__/|_.__/|_|\\__|  \\___/|____/  \n\n"
+		 "====================================================================\n\n");
+
+	printf("kernel on Orange's \n"
+		"team members :\n        ZengJiaxing\n        LiYichao\n        ZhaoangYouYou\n"
+		"\nProject address on Github : https://github.com/rabbitOrg/rabbitos\n\n"		
+		"Please press Ctrl + F1/F2/F3 to switch consoles :)");
+}
+
+
 /*****************************************************************************
  *                                Init
  *****************************************************************************/
@@ -317,17 +349,8 @@ void Init()
 
 	printf("Init() is running ...\n");
 
-	printf("\n========================================================\n"
-		 "      ____       _     _     _ _      ___  ____   \n"
-		 "     |  _ \\ __ _| |__ | |__ (_) |_   / _ \\/ ___|  \n"
-		 "     | |_) / _` | '_ \\| '_ \\| | __| | | | \\___ \\  \n"
-		 "     |  _ < (_| | |_) | |_) | | |_  | |_| |___) | \n"
-		 "     |_| \\_\\__,_|_.__/|_.__/|_|\\__|  \\___/|____/  \n\n"
-		 "========================================================\n\n");
-
 	/* extract `cmd.tar' */
 	untar("/cmd.tar");
-			
 
 	char * tty_list[] = {"/dev_tty1", "/dev_tty2"};
 
@@ -338,7 +361,7 @@ void Init()
 			printf("[parent is running, child pid:%d]\n", pid);
 		}
 		else {	/* child process */
-			printf("[child is running, pid:%d]\n", getpid());
+			//printf("[child is running, pid:%d]\n", getpid());
 			close(fd_stdin);
 			close(fd_stdout);
 			
@@ -346,6 +369,8 @@ void Init()
 			assert(0);
 		}
 	}
+
+	showTitle();
 
 	while (1) {
 		int s;
@@ -363,7 +388,6 @@ void Init()
 void TestA()
 {
 	for(;;) {
-		//printf("233");
 	}
 }
 
@@ -403,3 +427,37 @@ PUBLIC void panic(const char *fmt, ...)
 	__asm__ __volatile__("ud2");
 }
 
+
+/*****************************************************************************
+*							 自定义内容
+*						 edit by ZengJiaxing
+******************************************************************************/
+
+
+/***************************************************************************
+*								help
+****************************************************************************/
+PUBLIC int help() {
+	printf("=============================================================================\n"
+			"Rabbit OS bash, version 1.0.0-release\n"
+			"These shell commands are defined internally. Type 'help' to see this list.\n\n"
+			"help      :  Display this help message\n"
+			"echo      :  Print the arguments to the screen\n"
+			"pwd       :  Show the current directory\n"
+			"ls        :  List all files\n"
+			"cat       :  Show the content of file\n"
+			"=============================================================================\n");
+	return 0;
+}
+
+
+/*****************************************************************************
+ *                             find instruction
+ *****************************************************************************/
+PUBLIC int find_instr(int argc, char* argv[]) {
+	if(strcmp(argv[0], "help") == 0)
+		return help();
+
+
+	return -2;
+}

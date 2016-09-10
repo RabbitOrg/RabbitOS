@@ -25,12 +25,29 @@ $cd ..
 $bochs -f bochsrc
 ```
 
+##版本1.2
+
+- 修改开机动画
+
+- 增加help信息
+<code>$help</code>
+
+- 明白了之前卡死的问题是因为用的是bochs x86 emulator , 改成用 bochs x86-64 emulator 就可以解决卡死异常的问题。
+所以建议后人不要下载bochs的tar包然后重新编译安装 而是直接
+<code>sudo apt-get install bochs bochs-x bochs-sdl</code>
+
+具体问题参考
+[bochs安装一系列问题](http://www.cnblogs.com/zhangze/p/3143054.html)
+
+
 ##版本1.1
 
 **只能读1024字节的cat指令以及可以创建文件的touch指令**
 
 1.在/command 中 增加一个cat.c
+
 2.修改/command/MakeFile 增添对此的编译即可
+
 3.因为只需调用之前文件系统写好的open()和read()等等函数，故不需要写其他文件的代码。
 
 **增加一个ls指令**
@@ -176,7 +193,7 @@ P267 & P268 ----- 键盘中断 MakeCode & BreakCode
 
 <code>Error : undefined reference to '__stack_chk_fail'</code>
 
-需要改MakeFile里面的CFLAGS 加上 ** -fno-stack-protector **
+需要改MakeFile里面的CFLAGS 加上 ```-fno-stack-protector```
 <br>
 即CFLAGS	= -I include/ -c -fno-builtin -fno-stack-protector
 
