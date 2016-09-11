@@ -1,10 +1,12 @@
 #include "stdio.h"
 #include "../include/sys/fs.h"
+#include "../include/string.h"
 
 int main(int argc, char * argv[])
 {
 	const int rd_bytes = 1024;
 	char bufr[rd_bytes];
+	memset(bufr, 0, rd_bytes);
 
 	/* open */
 	int fd = open(argv[1], O_RDWR);

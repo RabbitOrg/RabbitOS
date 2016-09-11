@@ -125,7 +125,7 @@ PUBLIC int kernel_main()
 	p_proc_ready	= proc_table;
 
 	init_clock();
-        init_keyboard();
+    init_keyboard();
 
 	restart();
 
@@ -143,6 +143,16 @@ PUBLIC int get_ticks()
 	msg.type = GET_TICKS;
 	send_recv(BOTH, TASK_SYS, &msg);
 	return msg.RETVAL;
+}
+
+struct time get_time_RTC()
+{
+	struct time t;
+	MESSAGE msg;
+	msg.type = GET_RTC_TIME;
+	msg.BUF= &t;
+	send_recv(BOTH, TASK_SYS, &msg);
+	return t;
 }
 
 
@@ -326,10 +336,21 @@ void showTitle() {
 		 "             |_| \\_\\__,_|_.__/|_.__/|_|\\__|  \\___/|____/  \n\n"
 		 "====================================================================\n\n");
 
-	printf("kernel on Orange's \n"
+	char * info = "kernel on Orange's \n"
 		"team members :\n        ZengJiaxing\n        LiYichao\n        ZhaoangYouYou\n"
 		"\nProject address on Github : https://github.com/rabbitOrg/rabbitos\n\n"		
-		"Please press Ctrl + F1/F2/F3 to switch consoles :)");
+		"Please press Ctrl + F1/F2/F3 to switch consoles :)";
+
+	int ch = 0;
+	for(ch = 0; ch < strlen(info); ch++) {
+		printf("%c", info[ch]);
+		milli_delay(100);
+	}
+
+	/*printf("kernel on Orange's \n"
+		"team members :\n        ZengJiaxing\n        LiYichao\n        ZhaoangYouYou\n"
+		"\nProject address on Github : https://github.com/rabbitOrg/rabbitos\n\n"		
+		"Please press Ctrl + F1/F2/F3 to switch consoles :)");*/
 }
 
 
@@ -370,6 +391,7 @@ void Init()
 		}
 	}
 
+	milli_delay(10000);
 	showTitle();
 
 	while (1) {
@@ -444,8 +466,12 @@ PUBLIC int help() {
 			"help      :  Display this help message\n"
 			"echo      :  Print the arguments to the screen\n"
 			"pwd       :  Show the current directory\n"
+			"time      :  Print the current time\n"
+			"touch     :  Create a file\n"
 			"ls        :  List all files\n"
 			"cat       :  Show the content of file\n"
+			"vi        :  Edit the file\n"
+			"cpuinfo   :  Show the infomation of CPU\n"
 			"=============================================================================\n");
 	return 0;
 }
@@ -457,7 +483,17 @@ PUBLIC int help() {
 PUBLIC int find_instr(int argc, char* argv[]) {
 	if(strcmp(argv[0], "help") == 0)
 		return help();
-
+	else if(strcmp(argv[0], "time") == 0)
+		return currentTime();
 
 	return -2;
+}
+
+/*****************************************************************************
+ *                             show time
+ *****************************************************************************/
+PUBLIC int currentTime() {
+	struct time t = get_time_RTC();
+	printf("%d/%d/%d %d:%d:%d\n", t.year, t.month, t.day, t.hour, t.minute, t.second);
+	return 0;
 }

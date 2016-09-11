@@ -25,7 +25,13 @@ $cd ..
 $bochs -f bochsrc
 ```
 
-##版本1.2
+
+##版本1.2.0
+
+- 增加cpuinfo | time | vi 命令，完善控制台
+
+
+##版本1.1.5
 
 - 修改开机动画
 
@@ -40,7 +46,7 @@ $bochs -f bochsrc
 [bochs安装一系列问题](http://www.cnblogs.com/zhangze/p/3143054.html)
 
 
-##版本1.1
+##版本1.1.2
 
 **只能读1024字节的cat指令以及可以创建文件的touch指令**
 
