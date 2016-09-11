@@ -193,12 +193,14 @@ PUBLIC void in_process(TTY* tty, u32 key)
 		case F9:
 		case F10:
 		case F11:
-		case F12:
+		//case F12:
 			if ((key & FLAG_CTRL_L) ||
 			    (key & FLAG_CTRL_R)) {	/* Alt + F1~F12 */
 				select_console(raw_code - F1);
 			}
 			break;
+		case F12:
+			clearScreen();
 		default:
 			break;
 		}
@@ -485,3 +487,14 @@ PUBLIC void dump_tty_buf()
 	strcpy(sep, "\n");
 }
 
+void clearScreen() {
+	int i = 0;
+	//disp_pos = console_table[current_console].crtc_start;
+	for(i=0;i<console_table[current_console].crtc_start + 80 * 25;i++){
+		disp_str(" ");
+	}
+	disp_str("$ ");
+	disp_pos = console_table[current_console].crtc_start;
+	//console_table[current_console].crtc_start = 0;
+	console_table[current_console].cursor = console_table[current_console].crtc_start + 2;
+}

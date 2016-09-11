@@ -105,6 +105,9 @@ PUBLIC int kernel_main()
 
 		p->ticks = p->priority = prio;
 
+		/**/
+        //p->count = 0;
+
 		p->p_flags = 0;
 		p->p_msg = 0;
 		p->p_recvfrom = NO_TASK;
@@ -118,6 +121,31 @@ PUBLIC int kernel_main()
 
 		stk -= t->stacksize;
 	}
+
+
+	/*proc_table[7].ticks = proc_table[7].priority =  5; //a
+    proc_table[8].ticks = proc_table[8].priority =  15; //b
+	proc_table[9].ticks = proc_table[9].priority =  10; //c
+    InitQueue();
+
+    struct proc* temp_p = proc_table;
+    ReadyQueue* Q = Queue;
+    int w;
+	for (w = 0; w < NR_TASKS + NR_PROCS; w++,temp_p++) {           
+            Q->Pro_Queue[Q->rear] = temp_p;  
+            Q->rear=(Q->rear+1) % Q->maxsize;    
+    }
+
+	k_reenter = 0;
+	ticks = 0;
+
+    Q_index = 0;
+    IsEmpty = 0; //no empty  
+    IsBlock = 0;  
+    p_queue_ready = Queue;     
+    p_proc_ready = p_queue_ready ->Pro_Queue[p_queue_ready->front];
+
+    //p_proc_ready = proc_table;*/
 
 	k_reenter = 0;
 	ticks = 0;
@@ -404,6 +432,61 @@ void Init()
 }
 
 
+
+/*======================================================================*
+                               TestNULL
+ *======================================================================
+void TestN()
+{
+	while(1){
+		
+	}
+}
+/*======================================================================*
+                               TestA
+ *======================================================================
+void TestA()
+{
+        int fd_stdin  = open("/dev_tty2", O_RDWR);
+	assert(fd_stdin  == 0);
+	int fd_stdout = open("/dev_tty2", O_RDWR);
+	assert(fd_stdout == 1);
+	while(1){
+		printf("A.");
+		milli_delay(10);
+	}
+}
+
+/*======================================================================*
+                               TestB
+ *======================================================================
+void TestB()
+{
+int fd_stdin  = open("/dev_tty2", O_RDWR);
+	assert(fd_stdin  == 0);
+	int fd_stdout = open("/dev_tty2", O_RDWR);
+	while(1){
+		printf("B.");
+		milli_delay(10);
+	}
+}
+
+/*======================================================================*
+                               TestB
+ *======================================================================
+void TestC()
+{
+        int fd_stdin  = open("/dev_tty2", O_RDWR);
+	assert(fd_stdin  == 0);
+	int fd_stdout = open("/dev_tty2", O_RDWR);
+	while(1){
+//pro_details();
+		printf("C.");
+		milli_delay(10);
+                
+	}
+}*/
+
 /*======================================================================*
                                TestA
  *======================================================================*/
@@ -467,7 +550,9 @@ PUBLIC int help() {
 			"echo      :  Print the arguments to the screen\n"
 			"pwd       :  Show the current directory\n"
 			"time      :  Print the current time\n"
+			"ps        :  Print the status of processes\n"
 			"touch     :  Create a file\n"
+			"rm        :  delete a file\n"
 			"ls        :  List all files\n"
 			"cat       :  Show the content of file\n"
 			"vi        :  Edit the file\n"
@@ -485,6 +570,8 @@ PUBLIC int find_instr(int argc, char* argv[]) {
 		return help();
 	else if(strcmp(argv[0], "time") == 0)
 		return currentTime();
+	else if(strcmp(argv[0], "ps") == 0)
+		return pro_details();
 
 	return -2;
 }
@@ -496,4 +583,26 @@ PUBLIC int currentTime() {
 	struct time t = get_time_RTC();
 	printf("%d/%d/%d %d:%d:%d\n", t.year, t.month, t.day, t.hour, t.minute, t.second);
 	return 0;
+}
+
+/*****************************************************************************
+ *                             process message
+ *****************************************************************************/
+PUBLIC int pro_details()
+{
+    struct proc * p = proc_table;
+    int i;
+    printf("The details of all the processes are as follows:\n");
+    printf("===================== System Task ====================\n");
+    for (i = 0; i < NR_TASKS; i++,p++) {
+		/* TASK */                       
+        printf("pid: %d  |  Name: %s  |  Priority: %d \n", i, p->name, p->priority);
+    }
+    printf("===================== User Process ====================\n");      
+    for (; i < NR_TASKS +/* NR_PROCS*/NR_NATIVE_PROCS; i++,p++) {
+		 /* USER PROC */
+        printf("pid %d  |  Name: %s  |  Priority: %d  |  Running Status: %d\n", i, p->name, p->priority, p->p_flags);
+            
+    }
+    return 0;
 }
