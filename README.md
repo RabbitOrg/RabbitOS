@@ -25,6 +25,27 @@ $cd ..
 $bochs -f bochsrc
 ```
 
+##版本1.3.0
+
+=============================================================================
+
+Rabbit OS bash, version 1.0.0-release
+These shell commands are defined internally. Type 'help' to see this list.
+help      :  Display this help message
+echo      :  Print the arguments to the screen
+pwd       :  Show the current directory
+time      :  Print the current time
+ps        :  Print the status of processes
+touch     :  Create a file
+rm        :  delete a file
+mv        :  move a file
+ls        :  List all files
+cat       :  Show the content of file
+vi        :  Edit the file
+cpuinfo   :  Show the infomation of CPU
+
+=============================================================================
+
 
 ##版本1.2.0
 
