@@ -365,7 +365,7 @@ void showTitle() {
 		 "====================================================================\n\n");
 
 	char * info = "kernel on Orange's \n"
-		"team members :\n        ZengJiaxing\n        LiYichao\n        ZhaoangYouYou\n"
+		"team members :\n        ZengJiaxing\n        LiYichao\n        ZhaoangYouyou\n"
 		"\nProject address on Github : https://github.com/rabbitOrg/rabbitos\n\n"		
 		"Please press Ctrl + F1/F2/F3 to switch consoles :)";
 
@@ -553,6 +553,7 @@ PUBLIC int help() {
 			"ps        :  Print the status of processes\n"
 			"touch     :  Create a file\n"
 			"rm        :  delete a file\n"
+			"mv        :  move a file\n"
 			"ls        :  List all files\n"
 			"cat       :  Show the content of file\n"
 			"vi        :  Edit the file\n"
